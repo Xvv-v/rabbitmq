@@ -153,7 +153,7 @@ func (c *Connect) SendMsg(msg []byte, ename, key, etype string) {
 }
 
 //Receive 接收消息 参数：队列名，交换机名，routing-key
-func (c *Connect) Receive(qname, ename, key string) []byte {
+func (c *Connect) Receive(qname, ename, key string) <-chan amqp.Delivery {
 
 	mark := 0
 	//如果没有该队列，就创建一个
@@ -193,11 +193,6 @@ func (c *Connect) Receive(qname, ename, key string) []byte {
 	if err != nil {
 		log.Fatal("接收消息失败：", err)
 	}
-	var b amqp.Delivery
-	for b = range msg {
-		fmt.Printf("%s\n", b.Body)
-		b.Ack(false)
-		return b.Body
-	}
-	return nil
+
+	return msg
 }
